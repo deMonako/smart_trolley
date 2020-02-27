@@ -115,28 +115,6 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	 // HAL_GPIO_TogglePin(LD1_GPIO_Port, LD1_Pin);
-
-	 /* sensor_time = hcsr04_read();
-	  distance  = sensor_time / 23; //in cm*/
-
-	 /* while (HAL_GPIO_ReadPin (IR_DATA_GPIO_Port, IR_DATA_Pin));   // wait for the pin to go low
-
-		data = receive_data ();
-		if(convert_code (data)>=0 && convert_code (data) <=9)
-		{
-			pp = convert_code (data);
-		}*/
-
-
-	  /*if(pp == 0)
-	  {
-		  htim4.Instance->CCR1 = 1600;
-		  pp = 1;
-	  }*/
-
-	 // HAL_Delay(200);
-
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

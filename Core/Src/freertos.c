@@ -44,19 +44,19 @@
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
 
-int what_to_display = 0; // zmienna określająca tryb pracy wyswietlacza
-int button = 0; //zmienna przechowująca wartość odczytaną z pilota
-int zezwolenie = 0; // zezwolenie na wpisanie wartości zadanej (uruchomienie trybu odczytu)
+int what_to_display = 0; /*zmienna określająca tryb pracy wyswietlacza*/
+int button = 0; /*zmienna przechowująca wartość odczytaną z pilota*/
+int zezwolenie = 0; /*zezwolenie na wpisanie wartości zadanej (uruchomienie trybu odczytu)*/
 
-int cyfra_1 = 0; // zmienna przechowująca cyfrę dziesiętnych sumy
-int cyfra_2 = 0; // zmienna przechowująca cyfrę jedności sumy
-int sum = 0; // suma (finałowa wartość zadana)
+int cyfra_1 = 0; /*zmienna przechowująca cyfrę dziesiętnych sumy*/
+int cyfra_2 = 0; /*zmienna przechowująca cyfrę jedności sumy*/
+int sum = 0; /*suma (finałowa wartość zadana)*/
 
-int ostateczna = 0; // zezwolenie na wykonanie algorytmu sterującego (zapętlenie programu w DefaultTask)
-int a = 0; // ochrona przed przedwczesnym zezwoleniu na wpisanie wartosci zadanej (patrz 'zezwolenie')
+int ostateczna = 0; /*zezwolenie na wykonanie algorytmu sterującego (zapętlenie programu w DefaultTask)*/
+int a = 0; /*ochrona przed przedwczesnym zezwoleniu na wpisanie wartosci zadanej (patrz 'zezwolenie')*/
 
-long ikk = 0; // licznik odświeżania wyświetlacza
-int wartosc = 0; // odświeżana wyświetlana wartość
+long ikk = 0; /*licznik odświeżania wyświetlacza*/
+int wartosc = 0; /*odświeżana wyświetlana wartość*/
 
 /* USER CODE END PM */
 
@@ -163,11 +163,10 @@ void StartDefaultTask(void const * argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
 	servo_stop();
-	//servo_forward();
   /* Infinite loop */
   for(;;)
   {
-	  //powrót do wyświetlania rzeczywistej odległości (po wpisaniu wartości zadanej)
+	  /*powrót do wyświetlania rzeczywistej odległości (po wpisaniu wartości zadanej)*/
 	  if(what_to_display == 2)
 	  {
 		  HAL_Delay(2000);
@@ -175,14 +174,19 @@ void StartDefaultTask(void const * argument)
 		  ostateczna = 1;
 	  }
 
+	  /*warunek końcowy głównego algorytmu regulacji*/
 	  if(ostateczna == 1)
 	  {
-		HAL_GPIO_TogglePin(LD1_GPIO_Port, LD1_Pin);
+		 HAL_GPIO_WritePin(LD1_GPIO_Port, LD1_Pin,GPIO_PIN_SET);
 		 osSemaphoreWait(PermHandle, osWaitForever);
+
+		  /*głowna pętla algorytmu regulacji*/
 		 	do{
+		 	/*bieżący odczyt odległości*/
 			 sensor_time = hcsr04_read();
 			 distance = sensor_time/23;
 
+			 /*regulator dwupołożeniowy sterujący serwomechanizmem*/
 				 if(distance > sum)
 				 {
 					 servo_forward();
@@ -201,42 +205,41 @@ void StartDefaultTask(void const * argument)
 					 HAL_Delay(20);
 				 }
 
-			// HAL_Delay(10);
-
 			 display(wartosc,10);
 
 			 if(ikk == 0)
-			 {
 				 wartosc = distance;
-			 }
 
 			 ikk++;
 
 			 if(ikk == 30)
-			 {
 				 ikk = 0;
-			 }
 
+			 /*wyjście z pętli algorytmu regulacji (po wciśnięciu przycisku)*/
 			  if(HAL_GPIO_ReadPin (IR_DATA_GPIO_Port, IR_DATA_Pin) == GPIO_PIN_RESET)
 			  {
 				  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin,GPIO_PIN_SET);
 
-				  what_to_display = 0;
-				  button = 0;
-				  zezwolenie = 0;
-				  cyfra_1 = 0;
-				  cyfra_2 = 0;
-				  sum = 0;
-				  ostateczna = 0;
+				  	  /*ustawianie flag na domyślną wartość*/
+				  	  what_to_display = 0;
+				  	  button = 0;
+				  	  zezwolenie = 0;
+				  	  cyfra_1 = 0;
+				  	  cyfra_2 = 0;
+				  	  sum = 0;
+				  	  ostateczna = 0;
 
 				 HAL_Delay(100);
-				 a=0;
+
+				 	 a=0;
+
+				 HAL_GPIO_WritePin(LD1_GPIO_Port, LD1_Pin,GPIO_PIN_RESET);
 			  }
 			 }while(ostateczna != 0);
 		 }
-	  	  HAL_Delay(1000);
+	  	HAL_Delay(1000);
 		HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin,GPIO_PIN_RESET);
-		 osSemaphoreRelease(PermHandle);
+		osSemaphoreRelease(PermHandle);
 
     osDelay(1);
   }
@@ -304,6 +307,10 @@ void wyswietlacz_init(void const * argument)
 	else if(what_to_display == 2) //wartość zadana wyświetlana przez 2s, resetowana w DefautTask
 	{
 		sum = cyfra_1*10 + cyfra_2;
+		if(sum == 0)
+		{
+			sum = 2;
+		}
 		display(sum,50);
 	}
 	osSemaphoreRelease(PermHandle);

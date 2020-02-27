@@ -33,8 +33,8 @@
 <stringAttribute key="com.st.stm32cube.ide.mcu.debug.stlink.stlink_txt_serial_number" value=""/>
 <stringAttribute key="com.st.stm32cube.ide.mcu.debug.swv.datatrace_0" value="Enabled=false:Address=button:Access=Read/Write:Size=Word:Function=Data Value"/>
 <stringAttribute key="com.st.stm32cube.ide.mcu.debug.swv.datatrace_1" value="Enabled=false:Address=sensor_time:Access=Read/Write:Size=Word:Function=Data Value"/>
-<stringAttribute key="com.st.stm32cube.ide.mcu.debug.swv.datatrace_2" value="Enabled=false:Address=distance:Access=Read/Write:Size=Word:Function=Data Value"/>
-<stringAttribute key="com.st.stm32cube.ide.mcu.debug.swv.datatrace_3" value="Enabled=true:Address=zezwolenie:Access=Read/Write:Size=Word:Function=Data Value"/>
+<stringAttribute key="com.st.stm32cube.ide.mcu.debug.swv.datatrace_2" value="Enabled=true:Address=distance:Access=Read/Write:Size=Word:Function=Data Value"/>
+<stringAttribute key="com.st.stm32cube.ide.mcu.debug.swv.datatrace_3" value="Enabled=false:Address=zezwolenie:Access=Read/Write:Size=Word:Function=Data Value"/>
 <stringAttribute key="com.st.stm32cube.ide.mcu.debug.swv.itmports" value="0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0"/>
 <stringAttribute key="com.st.stm32cube.ide.mcu.debug.swv.itmports_priv" value="0:0:0:0"/>
 <stringAttribute key="com.st.stm32cube.ide.mcu.debug.swv.pc_sample" value="0:16384"/>
