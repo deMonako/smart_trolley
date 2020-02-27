@@ -1,0 +1,6 @@
+freertos.c:89:6:vApplicationGetIdleTaskMemory	24	static
+freertos.c:103:6:MX_FREERTOS_Init	136	static
+freertos.c:159:6:StartDefaultTask	16	static
+freertos.c:217:6:czujnik_init	16	static
+freertos.c:257:6:wyswietlacz_init	16	static
+freertos.c:287:6:pilot_init	16	static

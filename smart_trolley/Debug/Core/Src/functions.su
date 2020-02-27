@@ -1,0 +1,11 @@
+functions.c:10:6:delay	16	static
+functions.c:16:6:delay1	16	static
+functions.c:22:10:receive_data	16	static
+functions.c:65:5:convert_code	24	static
+functions.c:122:10:hcsr04_read	8	static
+functions.c:144:6:screenON	16	static
+functions.c:228:6:screenOFF	8	static
+functions.c:240:6:display	32	static
+functions.c:332:6:servo_forward	4	static
+functions.c:337:6:servo_backward	4	static
+functions.c:342:6:servo_stop	4	static
