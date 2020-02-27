@@ -44,21 +44,19 @@
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
 
-int what_to_display = 0;
-int button = 0;
-int zezwolenie = 0;
+int what_to_display = 0; // zmienna określająca tryb pracy wyswietlacza
+int button = 0; //zmienna przechowująca wartość odczytaną z pilota
+int zezwolenie = 0; // zezwolenie na wpisanie wartości zadanej (uruchomienie trybu odczytu)
 
-int cyfra_1 = 0;
-int cyfra_2 = 0;
+int cyfra_1 = 0; // zmienna przechowująca cyfrę dziesiętnych sumy
+int cyfra_2 = 0; // zmienna przechowująca cyfrę jedności sumy
+int sum = 0; // suma (finałowa wartość zadana)
 
-int sum = 0;
+int ostateczna = 0; // zezwolenie na wykonanie algorytmu sterującego (zapętlenie programu w DefaultTask)
+int a = 0; // ochrona przed przedwczesnym zezwoleniu na wpisanie wartosci zadanej (patrz 'zezwolenie')
 
-int ostateczna = 0;
-int a = 0;
-
-long ikk = 0;
-
-int wartosc = 0;
+long ikk = 0; // licznik odświeżania wyświetlacza
+int wartosc = 0; // odświeżana wyświetlana wartość
 
 /* USER CODE END PM */
 
