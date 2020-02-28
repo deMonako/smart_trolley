@@ -7,18 +7,21 @@
 
 #include "functions.h"
 
+/* opóźnienie w us TIM1 */
 void delay (uint32_t us)
 {
 	__HAL_TIM_SET_COUNTER(&htim1, 0);
 	while ((__HAL_TIM_GET_COUNTER(&htim1))<us);
 }
 
+/* opóźnienie w us TIM3 */
 void delay1 (uint32_t us)
 {
 	__HAL_TIM_SET_COUNTER(&htim3, 0);
 	while ((__HAL_TIM_GET_COUNTER(&htim3))<us);
 }
 
+/* odczyt danych z czujnika IR (pilot) */
 uint32_t receive_data (void)
 {
 	uint32_t code=0;
@@ -62,6 +65,7 @@ uint32_t receive_data (void)
 		return code;
 }
 
+/* konwersja danych z czujnika IR (pilot) na cyfry */
 int convert_code (uint32_t code)
 {
 	int wynik;
@@ -119,6 +123,7 @@ int convert_code (uint32_t code)
 	return wynik;
 }
 
+/* odczyt z czujnika odległości */
 uint32_t hcsr04_read (void)
 {
 	local_time=0;
@@ -141,6 +146,7 @@ uint32_t hcsr04_read (void)
 	return local_time;
 }
 
+/* konfiguracja stanów wyjść "segmentowych" w zależności od cyfry */
 void screenON(int number)
 {
 			if(number == 1)
@@ -225,6 +231,7 @@ void screenON(int number)
 			else;
 }
 
+/* reset wyjść "segmentowych */
 void screenOFF(void)
 {
 					HAL_GPIO_WritePin(A_GPIO_Port, A_Pin, GPIO_PIN_RESET);
@@ -237,6 +244,7 @@ void screenOFF(void)
 
 }
 
+/* wyświetlanie wartości na wyświetlaczu 7-segmentowym */
 void display(int cyfra, int czas)
 {
 	HAL_GPIO_WritePin(D1_GPIO_Port, D1_Pin, GPIO_PIN_RESET);
@@ -346,6 +354,7 @@ void display(int cyfra, int czas)
 	else;
 }
 
+/* funkcje odpowiedzialne za ruch serwa */
 void servo_forward()
 {
 	htim4.Instance->CCR1 = 18600; //1400

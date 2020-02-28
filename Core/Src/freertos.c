@@ -44,19 +44,19 @@
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
 
-int what_to_display = 0; /*zmienna określająca tryb pracy wyswietlacza*/
-int button = 0; /*zmienna przechowująca wartość odczytaną z pilota*/
-int zezwolenie = 0; /*zezwolenie na wpisanie wartości zadanej (uruchomienie trybu odczytu)*/
+int what_to_display = 0; /*!< zmienna określająca tryb pracy wyswietlacza */
+int button = 0; /*!< zmienna przechowująca wartość odczytaną z pilota */
+int zezwolenie = 0; /*!< zezwolenie na wpisanie wartości zadanej (uruchomienie trybu odczytu) */
 
-int cyfra_1 = 0; /*zmienna przechowująca cyfrę dziesiętnych sumy*/
-int cyfra_2 = 0; /*zmienna przechowująca cyfrę jedności sumy*/
-int sum = 0; /*suma (finałowa wartość zadana)*/
+int cyfra_1 = 0; /*!< zmienna przechowująca cyfrę dziesiętnych sumy */
+int cyfra_2 = 0; /*!< zmienna przechowująca cyfrę jedności sumy */
+int sum = 0; /*!< suma (finałowa wartość zadana) */
 
-int ostateczna = 0; /*zezwolenie na wykonanie algorytmu sterującego (zapętlenie programu w DefaultTask)*/
-int a = 0; /*ochrona przed przedwczesnym zezwoleniu na wpisanie wartosci zadanej (patrz 'zezwolenie')*/
+int ostateczna = 0; /*!< zezwolenie na wykonanie algorytmu sterującego (zapętlenie programu w DefaultTask) */
+int a = 0; /*!< ochrona przed przedwczesnym zezwoleniu na wpisanie wartosci zadanej (patrz 'zezwolenie') */
 
-long ikk = 0; /*licznik odświeżania wyświetlacza*/
-int wartosc = 0; /*odświeżana wyświetlana wartość*/
+long ikk = 0; /*!< licznik odświeżania wyświetlacza */
+int wartosc = 0; /*!< odświeżana wyświetlana wartość */
 
 /* USER CODE END PM */
 
@@ -166,7 +166,7 @@ void StartDefaultTask(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-	  /*powrót do wyświetlania rzeczywistej odległości (po wpisaniu wartości zadanej)*/
+	  /* powrót do wyświetlania rzeczywistej odległości (po wpisaniu wartości zadanej) */
 	  if(what_to_display == 2)
 	  {
 		  HAL_Delay(2000);
@@ -174,19 +174,20 @@ void StartDefaultTask(void const * argument)
 		  ostateczna = 1;
 	  }
 
-	  /*warunek końcowy głównego algorytmu regulacji*/
+	  /* warunek końcowy głównego algorytmu regulacji */
 	  if(ostateczna == 1)
 	  {
 		 HAL_GPIO_WritePin(LD1_GPIO_Port, LD1_Pin,GPIO_PIN_SET);
 		 osSemaphoreWait(PermHandle, osWaitForever);
 
-		  /*głowna pętla algorytmu regulacji*/
+		  /* głowna pętla algorytmu regulacji */
 		 	do{
-		 	/*bieżący odczyt odległości*/
+
+		 	/* bieżący odczyt odległości */
 			 sensor_time = hcsr04_read();
 			 distance = sensor_time/23;
 
-			 /*regulator dwupołożeniowy sterujący serwomechanizmem*/
+			 /* regulator dwupołożeniowy sterujący serwomechanizmem */
 				 if(distance > sum)
 				 {
 					 servo_forward();
@@ -205,17 +206,21 @@ void StartDefaultTask(void const * argument)
 					 HAL_Delay(20);
 				 }
 
+			/* eliminacja błędu z wyświetlaniem wartości 0 (czasem tak robiło nie wiem czemu) */
+			if(wartosc != 0)
 			 display(wartosc,10);
 
+			 /* przypisywanie wartości zczytanej wartości wyświetlanej */
 			 if(ikk == 0)
 				 wartosc = distance;
 
 			 ikk++;
 
+			 /* aktualizacja wartości wyświetlanej (co 30 pętli) */
 			 if(ikk == 30)
 				 ikk = 0;
 
-			 /*wyjście z pętli algorytmu regulacji (po wciśnięciu przycisku)*/
+			 /* wyjście z pętli algorytmu regulacji (po wciśnięciu przycisku) */
 			  if(HAL_GPIO_ReadPin (IR_DATA_GPIO_Port, IR_DATA_Pin) == GPIO_PIN_RESET)
 			  {
 				  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin,GPIO_PIN_SET);
@@ -237,7 +242,7 @@ void StartDefaultTask(void const * argument)
 			  }
 			 }while(ostateczna != 0);
 		 }
-	  	HAL_Delay(1000);
+	  	HAL_Delay(500);
 		HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin,GPIO_PIN_RESET);
 		osSemaphoreRelease(PermHandle);
 
@@ -261,7 +266,7 @@ void czujnik_init(void const * argument)
   {
 	  osSemaphoreWait(PermHandle, osWaitForever);
 
-	  //cykliczny odczyt odległości
+	  /* cykliczny odczyt odległości */
 	  sensor_time = hcsr04_read();
 	  if(sensor_time/23 >= 2 && sensor_time/23 <= 50)
 	  {
@@ -300,13 +305,20 @@ void wyswietlacz_init(void const * argument)
   for(;;)
   {
 	osSemaphoreWait(PermHandle, osWaitForever);
-	if(what_to_display == 0) //wartość rzeczywista
+
+	/*!
+	* \brief wyświetlanie wartości na wyświetlaczu
+	*
+	* what_to_display == 0 -> wartość rzeczywista
+	* what_to_display == 2 -> wartość zadana wyświetlana przez 2s, resetowana w DefautTask
+	*/
+	if(what_to_display == 0)
 	{
 		display(distance,50);
 	}
-	else if(what_to_display == 2) //wartość zadana wyświetlana przez 2s, resetowana w DefautTask
+	else if(what_to_display == 2)
 	{
-		sum = cyfra_1*10 + cyfra_2;
+		sum = cyfra_1*10 + cyfra_2; /*!< obliczanie wartości zadanej */
 		if(sum == 0)
 		{
 			sum = 2;
@@ -333,17 +345,21 @@ void pilot_init(void const * argument)
   /* Infinite loop */
   for(;;)
   {
+	  /* odczyt po wyjściu z pętli algorytmu sterowania lub początku programu (tylko jednorazowo) */
 	  if(ostateczna == 0)
 	  {
+		  /* oczekiwanie na zezwolenie wpisania wartości (patrz niżej) */
 		  if(zezwolenie == 1)
-	  {
+		  {
 		  osSemaphoreWait(PermHandle, osWaitForever);
-		  //odczyt z pilota
 		  HAL_Delay(600);
+
+		  /* odczyt z pilota */
 		  while(HAL_GPIO_ReadPin (IR_DATA_GPIO_Port, IR_DATA_Pin));
 
 	  		  data = receive_data ();
 
+	  		/* konwersja danych na cyfry */
 	  		if(convert_code (data)>=0 && convert_code (data) <=9)
 	  		{
 	  			button = convert_code (data);
@@ -354,20 +370,25 @@ void pilot_init(void const * argument)
 	  		}
 	  		HAL_Delay(200);
 
+	  		/* zapisywanie kolejnych cyfr do pamięci */
 	  		if(what_to_display == 0)
 	  		{
 	  			what_to_display = 1;
 	  			cyfra_1 = button;
+	  			HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin,GPIO_PIN_SET);
 	  			display(cyfra_1,400);
-	  			HAL_Delay(1000);
+	  			HAL_Delay(500);
+	  			HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin,GPIO_PIN_RESET);
 	  			screenOFF();
 	  		}
 	  		else if(what_to_display == 1)
 	  		{
 	  			what_to_display = 2;
 	  			cyfra_2 = button;
+	  			HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin,GPIO_PIN_SET);
 	  			display(cyfra_2,400);
-	  			HAL_Delay(1000);
+	  			HAL_Delay(500);
+	  			HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin,GPIO_PIN_RESET);
 	  			screenOFF();
 	  			zezwolenie = 0;
 	  			HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin,GPIO_PIN_RESET); //sygnalizacja zezwolenia wpisania wartości
@@ -377,10 +398,10 @@ void pilot_init(void const * argument)
 	  }
 	  else;
 
-	  //zezwolenie na wpisanie wartości
-	  if(HAL_GPIO_ReadPin (IR_DATA_GPIO_Port, IR_DATA_Pin) == GPIO_PIN_RESET && a == 0)
+	  /* zezwolenie na wpisanie wartości */
+	  if(HAL_GPIO_ReadPin (IR_DATA_GPIO_Port, IR_DATA_Pin) == GPIO_PIN_RESET && a == 0 && HAL_GPIO_ReadPin (LD2_GPIO_Port, LD2_Pin) == GPIO_PIN_RESET)
 	  {
-		  HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin,GPIO_PIN_SET); //sygnalizacja zezwolenia wpisania wartości
+		  HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin,GPIO_PIN_SET);
 		  zezwolenie = 1;
 		  a=1;
 		  screenOFF();
